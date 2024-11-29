@@ -1,0 +1,25 @@
+services:
+  emulator:
+    image: budtmo/docker-android:emulator_11.0
+    container_name: android-emulator
+    ports:
+      - "6080:6080" # VNC access
+      - "5555:5555" # ADB access
+    environment:
+      - EMULATOR_DEVICE=Samsung Galaxy S10
+      - WEB_VNC=true
+    devices:
+      - "/dev/kvm:/dev/kvm" # Enable hardware acceleration
+
+  node-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-backend
+    ports:
+      - "8080:8080" # Node.js API server
+    depends_on:
+      - emulator
+    environment:
+      - ADB_HOST=emulator
+      - ADB_PORT=5555
